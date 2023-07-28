@@ -1,11 +1,12 @@
 import { Client, SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction } from 'discord.js';
 import { Command } from '../types';
 import { searchCommunityHelp } from '../search/search-community-help';
+import { searchDocs } from '../search/search-docs';
 
 export const SearchCommunityHelp: Command = {
   data: new SlashCommandBuilder()
     .setName('search')
-    .setDescription('Searches Community Help')
+    .setDescription('Searches Docs and Community Help')
     .addStringOption((option) =>
       option.setName('query').setDescription('The search query').setRequired(true),
     ) as SlashCommandBuilder,
@@ -20,9 +21,10 @@ export const SearchCommunityHelp: Command = {
 
     const searchQuery: string = interaction.options.getString('query', true);
 
-    const msg = await searchCommunityHelp(searchQuery);
+    const communityHelpResults = await searchCommunityHelp(searchQuery);
+    const docResults = await searchDocs(searchQuery);
 
-    if (msg.length === 0) {
+    if (communityHelpResults.length === 0 && docResults.length === 0) {
       await interaction.followUp({
         embeds: [
           new EmbedBuilder()
@@ -38,11 +40,19 @@ export const SearchCommunityHelp: Command = {
       return;
     }
 
-    const threadLinks: { name: string; url: string }[] = msg
-      ? msg.map((m: any) => {
+    let communityHelpLinks: { name: string; url: string }[] = communityHelpResults
+      ? communityHelpResults.map((m: any) => {
           return {
             name: m.name,
             url: `https://payloadcms.com/community-help/${m.platform.toLowerCase()}/${m.slug}`,
+          };
+        })
+      : [];
+    let docLinks: { name: string; url: string }[] = docResults
+      ? docResults.map((m: any) => {
+          return {
+            name: m.anchor,
+            url: m.url,
           };
         })
       : [];
@@ -56,11 +66,28 @@ export const SearchCommunityHelp: Command = {
       })
       .setTitle(`Results for **${searchQuery}**:`);
 
-    // Add each thread as a field
-    threadLinks.forEach((thread) => {
-      helpEmbed.addFields({ name: thread.name, value: thread.url });
-    });
+    let description = '';
+    let counter = 0;
 
+    // Add each thread as a field. Max. 6 fields in total and balanced, so 50/50 docs and community help.
+    if (docLinks.length > 0) {
+      docLinks = docLinks.slice(0, 6 - Math.min(communityHelpLinks.length, 3));
+      description += '## Documentation:\n';
+      docLinks.forEach((thread) => {
+        description += `- [${thread.name}](${thread.url})\n`;
+        ++counter;
+      });
+    }
+    if (communityHelpLinks.length > 0) {
+      communityHelpLinks = communityHelpLinks.slice(0, 6 - counter);
+      description += '## Community-Help:\n';
+
+      communityHelpLinks.forEach((thread) => {
+        description += `- [${thread.name}](${thread.url})\n`;
+      });
+    }
+
+    helpEmbed.setDescription(description);
     await interaction.followUp({ embeds: [helpEmbed] });
   },
 };

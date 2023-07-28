@@ -1,7 +1,8 @@
-import { AnyThreadChannel, ChannelType, Client, EmbedBuilder } from 'discord.js';
+import { AnyThreadChannel, ChannelType, Client, EmbedBuilder, ForumChannel } from 'discord.js';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 import { searchCommunityHelp } from '../search/search-community-help';
 import { postToSearchQuery } from '../search/post-to-search-query';
+import { searchDocs } from '../search/search-docs';
 
 export default (client: Client): void => {
   // when send message in thread
@@ -18,13 +19,36 @@ export default (client: Client): void => {
           return;
         }
 
+        const forumChannel: ForumChannel = (await client.channels.fetch(
+          thread.parentId as string,
+        )) as ForumChannel;
+
+        // First: mark as unanswered
+        const availableTags = forumChannel.availableTags;
+        const unansweredTagID: string | undefined = availableTags.find(
+          (tag) =>
+            // check if includes "solve" or equals "answered"
+            tag.name.toLowerCase().includes('unsolve') || tag.name.toLowerCase() === 'unanswered',
+        )?.id;
+
+        if (unansweredTagID) {
+          let appliedTags = [...thread.appliedTags];
+          // remove "unanswered tag"
+          appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID);
+
+          thread.setAppliedTags([...appliedTags, unansweredTagID]);
+          return;
+        } else {
+          console.error('unansweredTagID not found!');
+        }
+
         let searchQuery = await postToSearchQuery(thread.name, message.content);
         console.log('thread name', thread.name);
         console.log('searchquery', searchQuery);
 
-        const msg = await searchCommunityHelp(searchQuery);
-
-        if (msg.length === 0) {
+        const communityHelpResults = await searchCommunityHelp(searchQuery);
+        const docResults = await searchDocs(searchQuery);
+        if (communityHelpResults.length === 0 && docResults.length === 0) {
           channel.send({
             embeds: [
               new EmbedBuilder()
@@ -40,31 +64,52 @@ export default (client: Client): void => {
           return;
         }
 
-        const threadLinks: { name: string; url: string }[] = msg
-          ? msg.map((m: any) => {
+        let communityHelpLinks: { name: string; url: string }[] = communityHelpResults
+          ? communityHelpResults.map((m: any) => {
               return {
                 name: m.name,
                 url: `https://payloadcms.com/community-help/${m.platform.toLowerCase()}/${m.slug}`,
               };
             })
           : [];
+        let docLinks: { name: string; url: string }[] = docResults
+          ? docResults.map((m: any) => {
+              return {
+                name: m.anchor,
+                url: m.url,
+              };
+            })
+          : [];
 
-        const helpEmbed = new EmbedBuilder()
-          .setColor(0x0099ff)
-          .setAuthor({
-            name: 'New Community-Help Thread Created!',
-            iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
-            url: 'https://payloadcms.com/community-help',
-          })
-          .setDescription(
-            'Help is on the way! In the meantime, here are some existing threads that may help you:',
-          );
-        //.setThumbnail('https://i.imgur.com/AfFp7pu.png');
-
-        // Add each thread as a field
-        threadLinks.forEach((thread) => {
-          helpEmbed.addFields({ name: thread.name, value: thread.url });
+        const helpEmbed = new EmbedBuilder().setColor(0x0099ff).setAuthor({
+          name: 'New Community-Help Thread Created!',
+          iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+          url: 'https://payloadcms.com/community-help',
         });
+
+        let description =
+          'Help is on the way! In the meantime, here are some existing threads that may help you:';
+        let counter = 0;
+
+        // Add each thread as a field. Max. 6 fields in total and balanced, so 50/50 docs and community help.
+        if (docLinks.length > 0) {
+          docLinks = docLinks.slice(0, 6 - Math.min(communityHelpLinks.length, 3));
+          description += '\n## Documentation:\n';
+          docLinks.forEach((thread) => {
+            description += `- [${thread.name}](${thread.url})\n`;
+            ++counter;
+          });
+        }
+        if (communityHelpLinks.length > 0) {
+          communityHelpLinks = communityHelpLinks.slice(0, 6 - counter);
+          description += '## Community-Help:\n';
+
+          communityHelpLinks.forEach((thread) => {
+            description += `- [${thread.name}](${thread.url})\n`;
+          });
+        }
+
+        helpEmbed.setDescription(description);
 
         // Now you can send this embed
         channel.send({ embeds: [helpEmbed] });
