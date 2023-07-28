@@ -5,7 +5,7 @@ import { searchCommunityHelp } from '../search/search-community-help';
 export default (client: Client): void => {
   // when send message in thread
   client.on('messageCreate', async (message) => {
-    if (isCommunityHelpThread(message.channel) && !message.author.bot) {
+    if (isCommunityHelpThread(message.channel)) {
       const thread: AnyThreadChannel = message.channel as AnyThreadChannel;
 
       // send message to the forum channel
