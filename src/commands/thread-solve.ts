@@ -57,10 +57,16 @@ export const ThreadSolve: Command = {
         // check if includes "solve" or equals "answered"
         tag.name.toLowerCase().includes('solve') || tag.name.toLowerCase() === 'answered',
     )?.id;
-    if (!solvedTagID) {
+    const unansweredTagID: string | undefined = availableTags.find(
+      (tag) =>
+        // check if includes "solve" or equals "answered"
+        tag.name.toLowerCase().includes('unsolve') || tag.name.toLowerCase() === 'unanswered',
+    )?.id;
+
+    if (!solvedTagID || !unansweredTagID) {
       await interaction.followUp({
         ephemeral: true,
-        content: 'Bot error: Could not find a solved tag.',
+        content: 'Bot error: Could not find tags.',
       });
       return;
     }
@@ -74,7 +80,7 @@ export const ThreadSolve: Command = {
 
     let appliedTags = [...forumThread.appliedTags];
     // remove "unanswered tag"
-    appliedTags = appliedTags.filter((tag) => tag.toLowerCase() !== 'unanswered');
+    appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID);
 
     forumThread.setAppliedTags([...appliedTags, solvedTagID]);
 

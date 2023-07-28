@@ -5,6 +5,8 @@ export const Commands: Command[] = [ThreadSolve];
 
 export default (client: Client): void => {
   client.on('interactionCreate', async (interaction: Interaction) => {
+    console.log('interactionCreate');
+
     if (interaction.isCommand() || interaction.isContextMenuCommand()) {
       await handleSlashCommand(client, interaction);
     }
