@@ -85,7 +85,7 @@ export const ThreadSolve: Command = {
     forumThread.setAppliedTags([...appliedTags, solvedTagID]);
 
     const starEmbed = new EmbedBuilder()
-      .setColor(0x0099ff)
+      .setColor(0xffffff)
       .setTitle('Thread Solved!')
       .setURL('https://github.com/payloadcms/payload')
       .setAuthor({

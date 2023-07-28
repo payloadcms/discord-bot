@@ -28,7 +28,7 @@ export const SearchCommunityHelp: Command = {
       await interaction.followUp({
         embeds: [
           new EmbedBuilder()
-            .setColor(0x0099ff)
+            .setColor(0xffffff)
             .setAuthor({
               name: 'Community-Help Search',
               iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
@@ -58,7 +58,7 @@ export const SearchCommunityHelp: Command = {
       : [];
 
     const helpEmbed = new EmbedBuilder()
-      .setColor(0x0099ff)
+      .setColor(0xffffff)
       .setAuthor({
         name: 'Community-Help Search',
         iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
