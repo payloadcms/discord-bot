@@ -1,5 +1,5 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   Client,
   SlashCommandBuilder,
   AnyThreadChannel,
@@ -12,7 +12,7 @@ import { isCommunityHelpThread } from '../helpers/is-community-help';
 
 export const ThreadSolve: Command = {
   data: new SlashCommandBuilder().setName('solve').setDescription('Solves a thread'),
-  run: async (client: Client, interaction: CommandInteraction) => {
+  run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !isCommunityHelpThread(interaction.channel)) {
       await interaction.followUp({
         ephemeral: true,

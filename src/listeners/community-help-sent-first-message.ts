@@ -1,6 +1,7 @@
 import { AnyThreadChannel, ChannelType, Client, EmbedBuilder } from 'discord.js';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 import { searchCommunityHelp } from '../search/search-community-help';
+import { postToSearchQuery } from '../search/post-to-search-query';
 
 export default (client: Client): void => {
   // when send message in thread
@@ -17,8 +18,11 @@ export default (client: Client): void => {
           return;
         }
 
-        const threadName = thread.name;
-        const msg = await searchCommunityHelp(threadName);
+        let searchQuery = await postToSearchQuery(thread.name, message.content);
+        console.log('thread name', thread.name);
+        console.log('searchquery', searchQuery);
+
+        const msg = await searchCommunityHelp(searchQuery);
 
         if (msg.length === 0) {
           channel.send({

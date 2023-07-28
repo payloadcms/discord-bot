@@ -1,6 +1,6 @@
 import {
   Client,
-  CommandInteraction,
+  ChatInputCommandInteraction,
   ContextMenuCommandBuilder,
   MessageContextMenuCommandInteraction,
   SlashCommandBuilder,
@@ -8,7 +8,7 @@ import {
 
 export interface Command {
   data: SlashCommandBuilder;
-  run: (client: Client, interaction: CommandInteraction) => void;
+  run: (client: Client, interaction: ChatInputCommandInteraction) => void;
 }
 
 export interface ContextMenuCommand {
