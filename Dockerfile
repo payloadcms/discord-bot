@@ -3,8 +3,6 @@ FROM node:20-alpine AS builder
 RUN mkdir -p /app
 WORKDIR /app
 
-RUN npm install -g yarn
-
 COPY package.json  .
 COPY yarn.lock .
 
