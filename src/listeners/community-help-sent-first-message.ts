@@ -37,7 +37,6 @@ export default (client: Client): void => {
           appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID);
 
           thread.setAppliedTags([...appliedTags, unansweredTagID]);
-          return;
         } else {
           console.error('unansweredTagID not found!');
         }
