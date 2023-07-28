@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { Commands } from './slash-commands';
+import { Commands, ContextMenuCommands } from './slash-commands';
 
 export default (client: Client): void => {
   client.on('ready', async () => {
@@ -9,6 +9,9 @@ export default (client: Client): void => {
     const commands = [];
     for (const command of Commands) {
       commands.push(command.data.toJSON());
+    }
+    for (const contextMenuCommand of ContextMenuCommands) {
+      commands.push(contextMenuCommand.data.toJSON());
     }
     await client.application.commands.set(commands);
 

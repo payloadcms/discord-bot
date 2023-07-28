@@ -1,4 +1,4 @@
-import { AnyThreadChannel, ChannelType, TextBasedChannel } from 'discord.js';
+import { ChannelType, TextBasedChannel } from 'discord.js';
 
 export function isCommunityHelpThread(thread: TextBasedChannel): boolean {
   if (!thread.isThread()) {

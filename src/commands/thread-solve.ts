@@ -7,7 +7,7 @@ import {
   EmbedBuilder,
   GuildMember,
 } from 'discord.js';
-import { Command } from '../Command';
+import { Command } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 
 export const ThreadSolve: Command = {

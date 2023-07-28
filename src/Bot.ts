@@ -18,6 +18,7 @@ const client = new Client({
     'GuildMessageTyping',
     'GuildMessageReactions',
     'GuildMembers',
+    'MessageContent',
   ],
 });
 
