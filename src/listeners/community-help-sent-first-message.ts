@@ -29,9 +29,8 @@ export default (client: Client): void => {
             embeds: [
               new EmbedBuilder()
                 .setColor(0x0099ff)
-                .setTitle('New Community-Help Thread Created!')
                 .setAuthor({
-                  name: 'Payload Bot',
+                  name: 'New Community-Help Thread Created!',
                   iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
                   url: 'https://payloadcms.com/community-help',
                 })
@@ -52,9 +51,8 @@ export default (client: Client): void => {
 
         const helpEmbed = new EmbedBuilder()
           .setColor(0x0099ff)
-          .setTitle('New Community-Help Thread Created!')
           .setAuthor({
-            name: 'Payload Bot',
+            name: 'New Community-Help Thread Created!',
             iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
             url: 'https://payloadcms.com/community-help',
           })

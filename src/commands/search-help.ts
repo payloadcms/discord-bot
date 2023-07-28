@@ -27,9 +27,8 @@ export const SearchCommunityHelp: Command = {
         embeds: [
           new EmbedBuilder()
             .setColor(0x0099ff)
-            .setTitle('Community-Help Search')
             .setAuthor({
-              name: 'Payload Bot',
+              name: 'Community-Help Search',
               iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
               url: 'https://payloadcms.com/community-help',
             })
@@ -50,13 +49,12 @@ export const SearchCommunityHelp: Command = {
 
     const helpEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
-      .setTitle('Community-Help Search')
       .setAuthor({
-        name: 'Payload Bot',
+        name: 'Community-Help Search',
         iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
         url: 'https://payloadcms.com/community-help',
       })
-      .setDescription(`Results for **${searchQuery}**:`);
+      .setTitle(`Results for **${searchQuery}**:`);
 
     // Add each thread as a field
     threadLinks.forEach((thread) => {

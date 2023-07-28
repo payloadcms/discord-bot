@@ -98,14 +98,14 @@ export const ThreadSolve: Command = {
       )
       //.setThumbnail('https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png')
       .addFields({
-        name: '🌟 Star Us on GitHub 🌟',
-        value: '[Click here to star us on GitHub](https://github.com/payloadcms/payload)',
+        name: '🌟 Star Us on GitHub',
+        value: '**[Click here to star us on GitHub](https://github.com/payloadcms/payload)**',
       })
       // review us field
       .addFields({
-        name: '👍 Review Us 👍',
+        name: '👍 Review Us',
         value:
-          '[Click here to review us on G2](https://www.g2.com/products/payload-cms/take_survey)',
+          '**[Click here to review us on G2](https://www.g2.com/products/payload-cms/take_survey)**',
       });
     await interaction.followUp({
       ephemeral: false,
