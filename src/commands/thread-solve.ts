@@ -72,7 +72,11 @@ export const ThreadSolve: Command = {
       return;
     }
 
-    forumThread.setAppliedTags([...forumThread.appliedTags, solvedTagID]);
+    let appliedTags = [...forumThread.appliedTags];
+    // remove "unanswered tag"
+    appliedTags = appliedTags.filter((tag) => tag.toLowerCase() !== 'unanswered');
+
+    forumThread.setAppliedTags([...appliedTags, solvedTagID]);
 
     const starEmbed = new EmbedBuilder()
       .setColor(0x0099ff)
