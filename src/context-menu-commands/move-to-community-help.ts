@@ -104,7 +104,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       });
     }
 
-    await interaction.followUp({
+    const followUpMessage = await interaction.followUp({
       content:
         '**<@' +
         interaction.targetMessage.author.id +
@@ -114,6 +114,21 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
         '>**\n\n' +
         "Community-help is indexed by search engines - that's why we moved your question there :smile:",
     });
+
+    // edit thread message to include link to followup
+    await thread.messages.cache.first()?.edit({
+      content:
+        '**Original message from <@' +
+        interaction.targetMessage.author.id +
+        '>' +
+        ' - Moved from ' +
+        followUpMessage.url +
+        ' (in <#' +
+        interaction.channel.id +
+        '>)**\n\n' +
+        messageContent,
+    });
+
     // get reaction message
     //const message = await interaction.channel.messages.fetch(interaction.replied as string);
     return;
