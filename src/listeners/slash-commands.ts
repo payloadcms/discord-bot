@@ -1,6 +1,6 @@
 import {
+  ChatInputCommandInteraction,
   Client,
-  CommandInteraction,
   Interaction,
   MessageContextMenuCommandInteraction,
 } from 'discord.js';
@@ -8,7 +8,8 @@ import { Command, ContextMenuCommand } from '../types';
 import { ThreadSolve } from '../commands/thread-solve';
 import { MoveToCommunityHelp } from '../context-menu-commands/move-to-community-help';
 import { ThreadUnSolve } from '../commands/thread-unsolve';
-export const Commands: Command[] = [ThreadSolve, ThreadUnSolve];
+import { SearchCommunityHelp } from '../commands/search-help';
+export const Commands: Command[] = [ThreadSolve, ThreadUnSolve, SearchCommunityHelp];
 export const ContextMenuCommands: ContextMenuCommand[] = [MoveToCommunityHelp];
 
 export default (client: Client): void => {
@@ -25,7 +26,7 @@ export default (client: Client): void => {
 
 const handleSlashCommand = async (
   client: Client,
-  interaction: CommandInteraction,
+  interaction: ChatInputCommandInteraction,
 ): Promise<void> => {
   await interaction.deferReply();
 
