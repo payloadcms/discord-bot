@@ -34,7 +34,7 @@ export const SearchCommunityHelp: Command = {
               iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
               url: 'https://payloadcms.com/community-help',
             })
-            .setDescription(`No results for **${searchQuery}** found.`),
+            .setDescription('No results for `' + searchQuery + '` found.'),
         ],
       });
       return;
@@ -64,7 +64,7 @@ export const SearchCommunityHelp: Command = {
         iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
         url: 'https://payloadcms.com/community-help',
       })
-      .setTitle(`Results for **${searchQuery}**:`);
+      .setTitle('Results for `' + searchQuery + '`');
 
     let description = '';
     let counter = 0;
