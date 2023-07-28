@@ -7,7 +7,8 @@ import {
 import { Command, ContextMenuCommand } from '../types';
 import { ThreadSolve } from '../commands/thread-solve';
 import { MoveToCommunityHelp } from '../context-menu-commands/move-to-community-help';
-export const Commands: Command[] = [ThreadSolve];
+import { ThreadUnSolve } from '../commands/thread-unsolve';
+export const Commands: Command[] = [ThreadSolve, ThreadUnSolve];
 export const ContextMenuCommands: ContextMenuCommand[] = [MoveToCommunityHelp];
 
 export default (client: Client): void => {
