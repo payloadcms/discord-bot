@@ -1,4 +1,13 @@
-import { AnyThreadChannel, ChannelType, Client, EmbedBuilder, ForumChannel } from 'discord.js';
+import {
+  ActionRowBuilder,
+  AnyThreadChannel,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  Client,
+  EmbedBuilder,
+  ForumChannel,
+} from 'discord.js';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 import { searchCommunityHelp } from '../search/search-community-help';
 import { postToSearchQuery } from '../search/post-to-search-query';
@@ -45,6 +54,12 @@ export default (client: Client): void => {
         console.log('thread name', thread.name);
         console.log('searchquery', searchQuery);
 
+        const solvedButton = new ButtonBuilder()
+          .setCustomId('solved')
+          .setLabel('Mark post as solved')
+          .setStyle(ButtonStyle.Success);
+        const row = new ActionRowBuilder<any>().addComponents(solvedButton);
+
         const communityHelpResults = await searchCommunityHelp(searchQuery);
         const docResults = await searchDocs(searchQuery);
         if (communityHelpResults.length === 0 && docResults.length === 0) {
@@ -57,8 +72,11 @@ export default (client: Client): void => {
                   iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
                   url: 'https://payloadcms.com/community-help',
                 })
-                .setDescription('Help is on the way!'),
+                .setDescription(
+                  'Help is on the way! To mark it as solved, use the `/solve` command.',
+                ),
             ],
+            components: [row],
           });
           return;
         }
@@ -87,7 +105,7 @@ export default (client: Client): void => {
         });
 
         let description =
-          'Help is on the way! In the meantime, here are some existing threads that may help you:';
+          'Help is on the way! To mark it as solved, use the `/solve` command. In the meantime, here are some existing threads that may help you:';
         let counter = 0;
 
         // Add each thread as a field. Max. 6 fields in total and balanced, so 50/50 docs and community help.
@@ -111,7 +129,7 @@ export default (client: Client): void => {
         helpEmbed.setDescription(description);
 
         // Now you can send this embed
-        channel.send({ embeds: [helpEmbed] });
+        channel.send({ embeds: [helpEmbed], components: [row] });
       }
     }
   });

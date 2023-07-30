@@ -20,6 +20,16 @@ export default (client: Client): void => {
       await handleSlashCommand(client, interaction);
     } else if (interaction.isMessageContextMenuCommand()) {
       await handleContextMenuCommand(client, interaction);
+    } else if (interaction.isButton()) {
+      switch (interaction.customId) {
+        case 'solved': {
+          // make user run command
+          await interaction.reply({
+            content: 'Please run /solve to mark this thread as solved.',
+            ephemeral: true,
+          });
+        }
+      }
     }
   });
 };
