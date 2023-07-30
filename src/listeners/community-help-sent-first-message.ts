@@ -110,7 +110,10 @@ export default (client: Client): void => {
 
         // Add each thread as a field. Max. 6 fields in total and balanced, so 50/50 docs and community help.
         if (docLinks.length > 0) {
-          docLinks = docLinks.slice(0, 6 - Math.min(communityHelpLinks.length, 3));
+          const maxLength = 6 - Math.min(communityHelpLinks.length, 3);
+          if (docLinks.length > maxLength) {
+            docLinks = docLinks.slice(0, maxLength);
+          }
           description += '\n## Documentation:\n';
           docLinks.forEach((thread) => {
             description += `- [${thread.name}](${thread.url})\n`;
@@ -118,7 +121,10 @@ export default (client: Client): void => {
           });
         }
         if (communityHelpLinks.length > 0) {
-          communityHelpLinks = communityHelpLinks.slice(0, 6 - counter);
+          const maxLength = 7 - counter;
+          if (communityHelpLinks.length > maxLength) {
+            communityHelpLinks = communityHelpLinks.slice(0, maxLength);
+          }
           description += '## Community-Help:\n';
 
           communityHelpLinks.forEach((thread) => {
