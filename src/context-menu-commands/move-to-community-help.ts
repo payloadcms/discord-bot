@@ -100,7 +100,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
           '**This question has been moved to <#' +
           thread.id +
           '>**\n\n' +
-          "Community-help is indexed by search engines - that's why we moved the question there. Please continue the conversation there :smile:",
+          'Please continue the conversation there :smile:',
       });
     }
 
