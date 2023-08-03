@@ -94,7 +94,7 @@ export const ThreadSolve: Command = {
         url: 'https://payloadcms.com/community-help',
       })
       .setDescription(
-        'Glad your issue was resolved! :tada: If you want to help make payload better, please you give us a :star: on GitHub and review us - It helps us a lot.',
+        'Glad your issue was resolved! :tada: If you want to help make payload better, please give us a :star: on GitHub and review us - It helps us a lot.',
       )
       //.setThumbnail('https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png')
       .addFields({
