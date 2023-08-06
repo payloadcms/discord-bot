@@ -6,6 +6,7 @@ import {
   ForumChannel,
   EmbedBuilder,
   GuildMember,
+  ThreadMember,
 } from 'discord.js';
 import { Command } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
@@ -27,28 +28,16 @@ export const ThreadSolve: Command = {
       forumThread.parentId as string,
     )) as ForumChannel;
 
-    // check if user created the thread, or has the "contributor" role
-    const threadCreator = await forumThread.fetchOwner();
-    if (!threadCreator) {
+    // check if user has permission to solve the thread
+    if (
+      !interaction.inCachedGuild() ||
+      !(await hasPermission(interaction.member as GuildMember, forumThread))
+    ) {
       await interaction.followUp({
         ephemeral: true,
-        content: 'Bot error: Could not find thread creator.',
+        content: 'You do not have permission to mark this thread as solved.',
       });
       return;
-    }
-    // check if user created the thread,
-    if (threadCreator.id !== interaction.user.id) {
-      if (
-        !interaction.member ||
-        !interaction.inCachedGuild() ||
-        !hasPermission(interaction.member)
-      ) {
-        await interaction.followUp({
-          ephemeral: true,
-          content: 'You do not have permission to mark this thread as solved.',
-        });
-        return;
-      }
     }
 
     const availableTags = forumChannel.availableTags;
@@ -115,7 +104,32 @@ export const ThreadSolve: Command = {
 };
 
 // check if user has manage threads permission or the "contributor" role
-function hasPermission(commandExecutor: GuildMember): boolean {
+async function hasPermission(
+  commandExecutor: GuildMember,
+  forumThread: AnyThreadChannel,
+): Promise<boolean> {
+  const threadCreator = await forumThread.fetchOwner();
+  if (!threadCreator) {
+    return false;
+  }
+  // check if user created the thread
+  if (threadCreator.id === commandExecutor.user.id) {
+    return true;
+  }
+  if (!commandExecutor) {
+    return false;
+  }
+
+  // check if the threadCreator is a bot
+  if (threadCreator.user && threadCreator.user.bot) {
+    // check if the initial message in the forum thread mentions the command executor
+    const initialMessage = (await forumThread.messages.fetch()).first();
+    if (initialMessage && initialMessage.mentions.users.has(commandExecutor.user.id)) {
+      return true;
+    }
+  }
+
+  // check if the user has has the "contributor" role or manage threads permission (= is from the payload team)
   if (commandExecutor.permissions.has('ManageThreads')) {
     return true;
   }
