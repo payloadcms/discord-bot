@@ -78,13 +78,13 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       name: messageContent.length > 50 ? messageContent.substring(0, 50) + '...' : messageContent,
       message: {
         content:
-          '**Original message from <@' +
+          messageContent +
+          '\n\n**Original message from <@' +
           interaction.targetMessage.author.id +
           '>' +
           ' - Moved from <#' +
           interaction.channel.id +
-          '>**\n\n' +
-          messageContent,
+          '>**',
       },
       appliedTags: [unansweredTagID],
     });
@@ -118,15 +118,15 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
     // edit thread message to include link to followup
     await thread.messages.cache.first()?.edit({
       content:
-        '**Original message from <@' +
+        messageContent +
+        '\n\n**Original message from <@' +
         interaction.targetMessage.author.id +
         '>' +
         ' - Moved from ' +
         followUpMessage.url +
         ' (in <#' +
         interaction.channel.id +
-        '>)**\n\n' +
-        messageContent,
+        '>)**',
     });
 
     // get reaction message
