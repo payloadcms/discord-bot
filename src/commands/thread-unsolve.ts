@@ -89,7 +89,7 @@ export const ThreadUnSolve: Command = {
   },
 };
 
-// check if user has manage threads permission or the "contributor" role
+// check if user has permission to unsolve the thread
 async function hasPermission(
   commandExecutor: GuildMember,
   forumThread: AnyThreadChannel,
@@ -98,12 +98,22 @@ async function hasPermission(
   if (!threadCreator) {
     return false;
   }
+  if (!commandExecutor) {
+    return false;
+  }
+
   // check if user created the thread
   if (threadCreator.id === commandExecutor.user.id) {
     return true;
   }
-  if (!commandExecutor) {
-    return false;
+
+  if (threadCreator.user && threadCreator.user.bot) {
+    // check if the initial message in the forum thread mentions the command executor
+    const initialMessage = await forumThread.fetchStarterMessage();
+
+    if (initialMessage && initialMessage.mentions.users.has(commandExecutor.user.id)) {
+      return true;
+    }
   }
 
   // check if the threadCreator is a bot
