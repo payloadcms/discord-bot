@@ -109,10 +109,7 @@ async function hasPermission(
   forumThread: AnyThreadChannel,
 ): Promise<boolean> {
   const threadCreator = await forumThread.fetchOwner();
-  if (!threadCreator) {
-    return false;
-  }
-  if (!commandExecutor) {
+  if (!threadCreator || !commandExecutor) {
     return false;
   }
 
@@ -121,19 +118,11 @@ async function hasPermission(
     return true;
   }
 
+  // check if the threadCreator is a bot
   if (threadCreator.user && threadCreator.user.bot) {
     // check if the initial message in the forum thread mentions the command executor
     const initialMessage = await forumThread.fetchStarterMessage();
 
-    if (initialMessage && initialMessage.mentions.users.has(commandExecutor.user.id)) {
-      return true;
-    }
-  }
-
-  // check if the threadCreator is a bot
-  if (threadCreator.user && threadCreator.user.bot) {
-    // check if the initial message in the forum thread mentions the command executor
-    const initialMessage = (await forumThread.messages.fetch()).first();
     if (initialMessage && initialMessage.mentions.users.has(commandExecutor.user.id)) {
       return true;
     }
