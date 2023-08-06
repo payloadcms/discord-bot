@@ -35,7 +35,8 @@ export const ThreadSolve: Command = {
     ) {
       await interaction.followUp({
         ephemeral: true,
-        content: 'You do not have permission to mark this thread as solved.',
+        content:
+          'You do not have permission to mark this thread as solved. Only thread creators, contributors and payload team members can mark a thread as solved.',
       });
       return;
     }

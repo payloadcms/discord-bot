@@ -34,7 +34,8 @@ export const ThreadUnSolve: Command = {
     ) {
       await interaction.followUp({
         ephemeral: true,
-        content: 'You do not have permission to mark this thread as unsolved.',
+        content:
+          'You do not have permission to mark this thread as unsolved. Only thread creators, contributors and payload team members can mark a thread as unsolved.',
       });
       return;
     }
