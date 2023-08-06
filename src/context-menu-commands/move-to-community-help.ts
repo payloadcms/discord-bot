@@ -110,9 +110,9 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
         interaction.targetMessage.author.id +
         '>' +
         ' - Your question has been moved to <#' +
-        thread.id /* +
+        thread.id +
         '>**\n\n' +
-        "Community-help is indexed by search engines - that's why we moved your question there :smile:"*/,
+        'Please continue the conversation there :smile:',
     });
 
     // edit thread message to include link to followup
