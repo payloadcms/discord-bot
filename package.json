@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "algoliasearch": "^4.19.1",
-    "discord.js": "^14.11.0",
+    "discord.js": "14.13.0",
     "dotenv": "^16.3.1",
     "langchain": "^0.0.118",
     "node-fetch": "^3.3.2",
