@@ -100,7 +100,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
           '**This question has been moved to <#' +
           thread.id +
           '>**\n\n' +
-          "Please continue the conversation. Support messages outside of community help often get lost. We don't want that to happen to yours!",
+          "Please continue the conversation there. Support messages outside of community help often get lost. We don't want that to happen to yours!",
       });
     }
 
@@ -112,7 +112,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
         ' - Your question has been moved to <#' +
         thread.id +
         '>**\n\n' +
-        "Please continue the conversation. Support messages outside of community help often get lost. We don't want that to happen to yours!",
+        "Please continue the conversation there. Support messages outside of community help often get lost. We don't want that to happen to yours!",
     });
 
     // edit thread message to include link to followup
