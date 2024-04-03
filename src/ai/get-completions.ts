@@ -13,7 +13,7 @@ export async function getCompletions({
 }: {
   input: string;
   temperature: number;
-  model: 'text-davinci-003' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-4';
+  model: 'text-davinci-003' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k' | 'gpt-4' | 'gpt-4-turbo-preview';
   maxTokens: number;
   systemMessage?: string;
   presence_penalty?: number;
