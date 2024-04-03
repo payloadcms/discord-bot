@@ -1,15 +1,14 @@
 import { getCompletions } from '../ai/get-completions';
 
 export async function postToSearchQuery(title: string, message: string): Promise<string> {
-  const message_to_use = message.includes(
-    'Original message from' ? message.split('Original message from')[0] : message,
-  );
+  const message_to_use = message.includes('Original message from') ? message.split('Original message from')[0] : message
+
 
   const prompt = `
 Title: ${title}
 
 Message:
-${message_to_use}
+${message_to_use?.trim()}
 
 ###
 
