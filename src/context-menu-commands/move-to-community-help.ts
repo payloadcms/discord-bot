@@ -140,5 +140,9 @@ function hasPermission(commandExecutor: GuildMember): boolean {
     return true;
   }
 
+  if (commandExecutor.roles.cache.find((role) => role.name.toLowerCase() === 'contributor mod')) {
+    return true;
+  }
+
   return false;
 }
