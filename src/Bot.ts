@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import http from 'http';
 dotenv.config();
 
 import { Client, GatewayIntentBits } from 'discord.js';
@@ -28,3 +29,18 @@ communityHelpSentFirstMessage(client);
 slashCommands(client);
 
 client.login(token);
+
+// Create server for DO health check
+const server = http.createServer((req: any, res: any) => {
+  if (req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Health Check: OK');
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
+  }
+});
+
+// Listen on port 8080
+const PORT = 8080;
+server.listen(PORT);
