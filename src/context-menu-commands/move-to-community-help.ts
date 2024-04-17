@@ -2,8 +2,8 @@ import {
   ApplicationCommandType,
   Client,
   ContextMenuCommandBuilder,
-  GuildMember,
-  MessageContextMenuCommandInteraction,
+  GuildMember, Message,
+  MessageContextMenuCommandInteraction, ThreadChannel,
 } from 'discord.js';
 import { ContextMenuCommand } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
@@ -46,7 +46,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
     }
 
     const messageContent: string = interaction.targetMessage.content as string;
-    if (!messageContent) {
+    if (!messageContent && !interaction.targetMessage.attachments.size) {
       await interaction.followUp({
         ephemeral: true,
         content: 'You cannot use this command on a message without content.',
@@ -80,22 +80,34 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       attachmentStrings =  '\n\nAttachments:\n' + attachmentFiles.map((attachment: any) => attachment.url).join('\n');
     }
 
+    const avatarURL =( "https://cdn.discordapp.com/avatars/" +  interaction.targetMessage.author.id + "/" +  interaction.targetMessage.author.avatar + ".png" )?? interaction.targetMessage.author.defaultAvatarURL;
 
-    const thread = await communityHelpChannel.threads.create({
-      name: messageContent.length > 50 ? messageContent.substring(0, 50) + '...' : messageContent,
-      message: {
+    const webhooks = await communityHelpChannel.fetchWebhooks();
+    const webhook = webhooks?.size ? webhooks.first() : await communityHelpChannel.createWebhook({
+      name: interaction.targetMessage.author.displayName,
+      avatar: avatarURL,
+    })
+
+    if(!webhook) {
+      await interaction.followUp({
+        content: 'Could not create webhook.',
+      });
+      return;
+    }
+
+    // make webhook open thread
+     const threadMessage: Message = (await webhook.send({
+        username: interaction.targetMessage.author.displayName,
+        avatarURL: avatarURL,
+        // @ts-ignore
+        appliedTags: [unansweredTagID],
+        threadName: messageContent.length > 50 ? messageContent.substring(0, 50) + '...' : messageContent,
         content:
           messageContent +
-          attachmentStrings +
-          '\n\n**Original message from <@' +
-          interaction.targetMessage.author.id +
-          '>' +
-          ' - Moved from <#' +
-          interaction.channel.id +
-          '>**'
-      },
-      appliedTags: [unansweredTagID],
-    });
+          attachmentStrings
+      }) ) as Message;
+
+    const thread: ThreadChannel =  communityHelpChannel.threads.cache.get(threadMessage.channelId) as ThreadChannel
     await thread.members.add(interaction.targetMessage.author);
 
     // Delete original question if it's not in a thread
@@ -123,16 +135,16 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
         "Please continue the conversation there. Support messages outside of community help often get lost. We don't want that to happen to yours!",
     });
 
-    // edit thread message to include link to followup
-    await thread.messages.cache.first()?.edit({
+
+
+    await thread.send({
       content:
-        messageContent + attachmentStrings +
-        '\n\n**Original message from <@' +
+        'Original message from <@' +
         interaction.targetMessage.author.id +
         '>' +
         ' - Moved from ' +
-        followUpMessage.url + '**'
-    });
+        followUpMessage.url
+    })
 
     // get reaction message
     //const message = await interaction.channel.messages.fetch(interaction.replied as string);
