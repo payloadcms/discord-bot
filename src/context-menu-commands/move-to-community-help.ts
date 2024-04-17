@@ -108,7 +108,7 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       }) ) as Message;
 
     const thread: ThreadChannel =  communityHelpChannel.threads.cache.get(threadMessage.channelId) as ThreadChannel
-    await thread.members.add(interaction.targetMessage.author);
+    //await thread.members.add(interaction.targetMessage.author); // Tagging the user already adds them as a member
 
     // Delete original question if it's not in a thread
     if (!interaction.targetMessage.thread) {
