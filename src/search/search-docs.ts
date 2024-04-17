@@ -17,10 +17,11 @@ export async function searchDocs(search_term: string): Promise<any> {
       query: search_term,
       params: {
         hitsPerPage: algoliaPerPage,
-        attributesToRetrieve: ['objectID', 'url', 'type', 'anchor'],
+        attributesToRetrieve: ['objectID', 'url', 'type', 'anchor', 'hierarchy'],
       },
     },
   ]);
+
 
   // @ts-ignore
   return results.results[0].hits;

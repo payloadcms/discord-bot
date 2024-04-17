@@ -50,8 +50,11 @@ export const SearchCommunityHelp: Command = {
       : [];
     let docLinks: { name: string; url: string }[] = docResults
       ? docResults.map((m: any) => {
+
+        const title = m?.hierarchy?.lvl0 ?? m?.hierarchy?.lvl1 ?? m?.hierarchy?.lvl2 ?? m.anchor
+
           return {
-            name: m.anchor,
+            name: title,
             url: m.url,
           };
         })

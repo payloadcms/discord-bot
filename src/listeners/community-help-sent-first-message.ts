@@ -91,8 +91,10 @@ export default (client: Client): void => {
           : [];
         let docLinks: { name: string; url: string }[] = docResults
           ? docResults.map((m: any) => {
-              return {
-                name: m.anchor,
+            const title = m?.hierarchy?.lvl0 ?? m?.hierarchy?.lvl1 ?? m?.hierarchy?.lvl2 ?? m.anchor
+
+            return {
+                name: title,
                 url: m.url,
               };
             })
