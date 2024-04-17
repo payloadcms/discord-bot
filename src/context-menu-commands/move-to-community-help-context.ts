@@ -8,6 +8,7 @@ import {
 import { ContextMenuCommand } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 import { getCommunityHelpChannel } from '../helpers/get-community-help-channel';
+import { messageToTitle } from '../search/message-to-title';
 
 export const MoveToCommunityHelpContext: ContextMenuCommand = {
   data: new ContextMenuCommandBuilder()
@@ -119,13 +120,15 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
       .filter((message) => message.content && message.content.trim().length > 0)
       .map((message) => message.content).join('\n\n')
 
+    const threadName = await messageToTitle(messageContent)
+
     // make webhook open thread
     const threadMessage: Message = (await webhook.send({
       username: interaction.targetMessage.author.displayName,
       avatarURL: avatarURL,
       // @ts-ignore
       appliedTags: [unansweredTagID],
-      threadName: messageContent.length > 50 ? messageContent.substring(0, 50) + '...' : messageContent,
+      threadName: threadName,
       content:
         messageContent +
         attachmentStrings
