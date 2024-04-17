@@ -117,22 +117,18 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       // has thread - send message to thread
       await interaction.targetMessage.thread.send({
         content:
-          '**This question has been moved to <#' +
-          thread.id +
-          '>**\n\n' +
-          "Please continue the conversation there. Support messages outside of community help often get lost. We don't want that to happen to yours!",
+          "**This question has been moved to <#" +
+          thread.id + ">** so it doesn't get lost. Please continue the conversation there"
       });
     }
 
     const followUpMessage = await interaction.followUp({
       content:
-        '**<@' +
+        '<@' +
         interaction.targetMessage.author.id +
         '>' +
         ' - Your question has been moved to <#' +
-        thread.id +
-        '>**\n\n' +
-        "Please continue the conversation there. Support messages outside of community help often get lost. We don't want that to happen to yours!",
+        thread.id + "> so it doesn't get lost. Please continue the conversation there"
     });
 
 
