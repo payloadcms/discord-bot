@@ -26,10 +26,10 @@ Based on the title and the message of the post, generate a search query (max. 8 
       temperature: 0.9,
     });
     console.log('Post-to-search-query LLM completion:', completion.content?.trim())
-    return completion.content?.trim() ||  title;
+    return completion.content?.trim()?.replace(/['"]+/g, '') ||  title.replace(/['"]+/g, '');;
 
   } catch (e) {
     console.log('Error transforming searchQuery with OpenAI. Returning title instead\n', e);
   }
-  return title;
+  return title.replace(/['"]+/g, '');
 }

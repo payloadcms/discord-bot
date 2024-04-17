@@ -24,7 +24,7 @@ Based on the message of the post, generate a post title (max. 8 words)
       temperature: 0.9,
     });
     console.log('Post-to-search-query LLM completion:', completion.content?.trim())
-    return completion.content?.trim() ||  (
+    return completion.content?.trim()?.replace(/['"]+/g, '') ||  (
       message.length > 50 ? message.substring(0, 50) + '...' : message
     );
 
