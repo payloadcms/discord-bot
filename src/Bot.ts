@@ -7,6 +7,7 @@ import ready from './listeners/ready';
 import communityHelpCreated from './listeners/community-help-created';
 import communityHelpSentFirstMessage from './listeners/community-help-sent-first-message';
 import slashCommands from './listeners/slash-commands';
+import jobCreated from './listeners/job-created';
 
 const token = process.env.BOT_TOKEN;
 
@@ -25,6 +26,7 @@ const client = new Client({
 
 ready(client);
 communityHelpCreated(client);
+jobCreated(client);
 communityHelpSentFirstMessage(client);
 slashCommands(client);
 
