@@ -9,8 +9,9 @@ import { ThreadSolve } from '../commands/thread-solve';
 import { MoveToCommunityHelp } from '../context-menu-commands/move-to-community-help';
 import { ThreadUnSolve } from '../commands/thread-unsolve';
 import { SearchCommunityHelp } from '../commands/search-help';
+import { MoveToCommunityHelpContext } from '../context-menu-commands/move-to-community-help-context';
 export const Commands: Command[] = [ThreadSolve, ThreadUnSolve, SearchCommunityHelp];
-export const ContextMenuCommands: ContextMenuCommand[] = [MoveToCommunityHelp];
+export const ContextMenuCommands: ContextMenuCommand[] = [MoveToCommunityHelp, MoveToCommunityHelpContext];
 
 export default (client: Client): void => {
   client.on('interactionCreate', async (interaction: Interaction) => {
