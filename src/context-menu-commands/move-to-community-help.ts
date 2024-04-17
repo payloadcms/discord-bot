@@ -1,6 +1,5 @@
 import {
   ApplicationCommandType,
-  AttachmentBuilder,
   Client,
   ContextMenuCommandBuilder,
   GuildMember,
@@ -9,7 +8,6 @@ import {
 import { ContextMenuCommand } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
 import { getCommunityHelpChannel } from '../helpers/get-community-help-channel';
-import fetch from 'node-fetch';
 
 export const MoveToCommunityHelp: ContextMenuCommand = {
   data: new ContextMenuCommandBuilder()
@@ -56,35 +54,45 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       return;
     }
 
-    /* // TODO: Handle attachements
-    let attachmentFiles = [];
+    /// TODO: Handle attachements
+    let attachmentFiles: any = [];
 
     if (interaction.targetMessage.attachments) {
       const attachments = interaction.targetMessage.attachments.toJSON();
 
       // If there are any attachments, fetch them
-      if (attachments.length > 0) {
+      /*if (attachments.length > 0) {
         for (let i = 0; i < attachments.length; i++) {
           let response = await fetch(attachments[i].url);
-          let buffer = await response.buffer();
-          let file = new Attachment(buffer, attachments[i].name);
-          
+          //let buffer = await response.buffer();
+
+          //console.log('Handling attachment...', attachments, response)
+
+         // let file = new Attachment(buffer, attachments[i].name);
+
         }
-      }
+      }*/
+      attachmentFiles = attachments;
     }
-*/
+
+    let attachmentStrings = ''
+    if(attachmentFiles && attachmentFiles.length) {
+      attachmentStrings =  '\n\nAttachments:\n' + attachmentFiles.map((attachment: any) => attachment.url).join('\n');
+    }
+
 
     const thread = await communityHelpChannel.threads.create({
       name: messageContent.length > 50 ? messageContent.substring(0, 50) + '...' : messageContent,
       message: {
         content:
           messageContent +
+          attachmentStrings +
           '\n\n**Original message from <@' +
           interaction.targetMessage.author.id +
           '>' +
           ' - Moved from <#' +
           interaction.channel.id +
-          '>**',
+          '>**'
       },
       appliedTags: [unansweredTagID],
     });
@@ -118,15 +126,12 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
     // edit thread message to include link to followup
     await thread.messages.cache.first()?.edit({
       content:
-        messageContent +
+        messageContent + attachmentStrings +
         '\n\n**Original message from <@' +
         interaction.targetMessage.author.id +
         '>' +
         ' - Moved from ' +
-        followUpMessage.url +
-        ' (in <#' +
-        interaction.channel.id +
-        '>)**',
+        followUpMessage.url + '**'
     });
 
     // get reaction message
