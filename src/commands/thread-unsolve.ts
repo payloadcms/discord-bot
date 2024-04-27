@@ -9,6 +9,7 @@ import {
 } from 'discord.js';
 import { Command } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
+import { hasThreadManagePermission } from './hasThreadManagePermission';
 
 export const ThreadUnSolve: Command = {
   data: new SlashCommandBuilder().setName('unsolve').setDescription('Unolves a thread'),
@@ -30,7 +31,7 @@ export const ThreadUnSolve: Command = {
     // check if user has permission to unsolve the thread
     if (
       !interaction.inCachedGuild() ||
-      !(await hasPermission(interaction.member as GuildMember, forumThread))
+      !(await hasThreadManagePermission(interaction.member as GuildMember, forumThread))
     ) {
       await interaction.followUp({
         ephemeral: true,
@@ -90,38 +91,3 @@ export const ThreadUnSolve: Command = {
   },
 };
 
-// check if user has permission to unsolve the thread
-async function hasPermission(
-  commandExecutor: GuildMember,
-  forumThread: AnyThreadChannel,
-): Promise<boolean> {
-  const threadCreator = await forumThread.fetchOwner();
-  if (!threadCreator || !commandExecutor) {
-    return false;
-  }
-
-  // check if user created the thread
-  if (threadCreator.id === commandExecutor.user.id) {
-    return true;
-  }
-
-  // check if the threadCreator is a bot
-  if (threadCreator.user && threadCreator.user.bot) {
-    // check if the initial message in the forum thread mentions the command executor
-    const initialMessage = await forumThread.fetchStarterMessage();
-
-    if (initialMessage && initialMessage.mentions.users.has(commandExecutor.user.id)) {
-      return true;
-    }
-  }
-
-  // check if the user has has the "contributor" role or manage threads permission (= is from the payload team)
-  if (commandExecutor.permissions.has('ManageThreads')) {
-    return true;
-  }
-  if (commandExecutor.roles.cache.find((role) => role.name.toLowerCase() === 'contributor')) {
-    return true;
-  }
-
-  return false;
-}
