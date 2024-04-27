@@ -91,7 +91,9 @@ export default (client: Client): void => {
           : [];
         let docLinks: { name: string; url: string }[] = docResults
           ? docResults.map((m: any) => {
-            const title = m?.hierarchy?.lvl0 ?? m?.hierarchy?.lvl1 ?? m?.hierarchy?.lvl2 ?? m.anchor
+
+            const headers: string[] = Object.values(m.hierarchy).filter((header) => header) as string[];
+            const title = headers.join(' - ') || m.anchor;
 
             return {
                 name: title,
