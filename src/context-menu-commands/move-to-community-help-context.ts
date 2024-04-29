@@ -1,5 +1,5 @@
 import {
-  ApplicationCommandType,
+  ApplicationCommandType, AttachmentBuilder,
   Client,
   ContextMenuCommandBuilder,
   GuildMember, Message,
@@ -95,10 +95,30 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
       }
     }
 
-    let attachmentStrings = ''
-    if(attachmentFiles && attachmentFiles.length) {
-      attachmentStrings =  '\n\nAttachments:\n' + attachmentFiles.map((attachment: any) => attachment.url).join('\n');
+
+    // Download all attachments
+    const attachments: AttachmentBuilder[] = [];
+
+    for(const a of attachmentFiles) {
+      const attachmentURL = a.url;
+      const response = await fetch(attachmentURL);
+      if (response.ok) { // Check if the HTTP status code is 200-299
+        const arrayBuffer = await response.arrayBuffer(); // Get an ArrayBuffer
+        // Convert to  BufferResolvable | Stream
+        const buffer = Buffer.from(arrayBuffer);
+
+        const attachment = new AttachmentBuilder(buffer, {
+          name: a.name,
+        });
+
+        attachments.push(attachment);
+      } else {
+        console.error('Failed to fetch:', response.statusText);
+      }
+
     }
+
+
 
     const avatarURL =( "https://cdn.discordapp.com/avatars/" +  interaction.targetMessage.author.id + "/" +  interaction.targetMessage.author.avatar + ".png" )?? interaction.targetMessage.author.defaultAvatarURL;
 
@@ -128,10 +148,10 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
       avatarURL: avatarURL,
       // @ts-ignore
       appliedTags: [unansweredTagID],
+      files: attachments,
       threadName: threadName,
       content:
-        messageContent +
-        attachmentStrings
+        messageContent
     }) ) as Message;
 
 

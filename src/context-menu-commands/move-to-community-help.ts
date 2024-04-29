@@ -1,9 +1,12 @@
 import {
   ApplicationCommandType,
+  AttachmentBuilder,
   Client,
   ContextMenuCommandBuilder,
-  GuildMember, Message,
-  MessageContextMenuCommandInteraction, ThreadChannel,
+  GuildMember,
+  Message,
+  MessageContextMenuCommandInteraction,
+  ThreadChannel,
 } from 'discord.js';
 import { ContextMenuCommand } from '../types';
 import { isCommunityHelpThread } from '../helpers/is-community-help';
@@ -55,30 +58,31 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
       return;
     }
 
-    /// TODO: Handle attachements
     let attachmentFiles: any = [];
 
     if (interaction.targetMessage.attachments) {
-      const attachments = interaction.targetMessage.attachments.toJSON();
-
-      // If there are any attachments, fetch them
-      /*if (attachments.length > 0) {
-        for (let i = 0; i < attachments.length; i++) {
-          let response = await fetch(attachments[i].url);
-          //let buffer = await response.buffer();
-
-          //console.log('Handling attachment...', attachments, response)
-
-         // let file = new Attachment(buffer, attachments[i].name);
-
-        }
-      }*/
-      attachmentFiles = attachments;
+      attachmentFiles = interaction.targetMessage.attachments.toJSON();
     }
+    // Download all attachments
+    const attachments: AttachmentBuilder[] = [];
 
-    let attachmentStrings = ''
-    if(attachmentFiles && attachmentFiles.length) {
-      attachmentStrings =  '\n\nAttachments:\n' + attachmentFiles.map((attachment: any) => attachment.url).join('\n');
+    for(const a of attachmentFiles) {
+      const attachmentURL = a.url;
+      const response = await fetch(attachmentURL);
+      if (response.ok) { // Check if the HTTP status code is 200-299
+        const arrayBuffer = await response.arrayBuffer(); // Get an ArrayBuffer
+        // Convert to  BufferResolvable | Stream
+        const buffer = Buffer.from(arrayBuffer);
+
+        const attachment = new AttachmentBuilder(buffer, {
+          name: a.name,
+        });
+
+        attachments.push(attachment);
+      } else {
+        console.error('Failed to fetch:', response.statusText);
+      }
+
     }
 
     const avatarURL =( "https://cdn.discordapp.com/avatars/" +  interaction.targetMessage.author.id + "/" +  interaction.targetMessage.author.avatar + ".png" )?? interaction.targetMessage.author.defaultAvatarURL;
@@ -105,9 +109,9 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
         // @ts-ignore
         appliedTags: [unansweredTagID],
         threadName: threadName,
+       files: attachments,
         content:
-          messageContent +
-          attachmentStrings
+          messageContent
       }) ) as Message;
 
     const thread: ThreadChannel =  communityHelpChannel.threads.cache.get(threadMessage.channelId) as ThreadChannel
