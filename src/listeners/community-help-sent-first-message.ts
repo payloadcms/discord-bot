@@ -69,7 +69,7 @@ export default (client: Client): void => {
                 .setColor(0xffffff)
                 .setAuthor({
                   name: 'New Community-Help Thread Created!',
-                  iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+                  iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
                   url: 'https://payloadcms.com/community-help',
                 })
                 .setDescription(
@@ -104,7 +104,7 @@ export default (client: Client): void => {
 
         const helpEmbed = new EmbedBuilder().setColor(0xffffff).setAuthor({
           name: 'New Community-Help Thread Created!',
-          iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+          iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
           url: 'https://payloadcms.com/community-help',
         });
 

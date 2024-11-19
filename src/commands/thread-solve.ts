@@ -81,13 +81,13 @@ export const ThreadSolve: Command = {
       .setURL('https://github.com/payloadcms/payload')
       .setAuthor({
         name: 'Payload Bot',
-        iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+        iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
         url: 'https://payloadcms.com/community-help',
       })
       .setDescription(
         'Glad your issue was resolved! :tada: If you want to help make payload better, please give us a :star: on GitHub and review us - It helps us a lot.',
       )
-      //.setThumbnail('https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png')
+      //.setThumbnail('https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png')
       .addFields({
         name: '🌟 Star Us on GitHub',
         value: '**[Click here to star us on GitHub](https://github.com/payloadcms/payload)**',

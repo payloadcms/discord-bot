@@ -31,7 +31,7 @@ export const SearchCommunityHelp: Command = {
             .setColor(0xffffff)
             .setAuthor({
               name: 'Community-Help Search',
-              iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+              iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
               url: 'https://payloadcms.com/community-help',
             })
             .setDescription('No results for `' + searchQuery + '` found.'),
@@ -66,7 +66,7 @@ export const SearchCommunityHelp: Command = {
       .setColor(0xffffff)
       .setAuthor({
         name: 'Community-Help Search',
-        iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+        iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
         url: 'https://payloadcms.com/community-help',
       })
       .setTitle('Results for `' + searchQuery + '`');

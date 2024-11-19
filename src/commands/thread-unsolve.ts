@@ -80,7 +80,7 @@ export const ThreadUnSolve: Command = {
       .setURL('https://github.com/payloadcms/payload')
       .setAuthor({
         name: 'Payload Bot',
-        iconURL: 'https://cms.payloadcms.com/media/payload-logo-icon-square-v2.png',
+        iconURL: 'https://l4wlsi8vxy8hre4v.public.blob.vercel-storage.com/discord-bot-logo.png',
         url: 'https://payloadcms.com/community-help',
       })
       .setDescription('This thread has been marked as unsolved. Help is on the way!');
