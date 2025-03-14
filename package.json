@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "dev": "nodemon",
     "start": "ts-node src/Bot.ts"
   },
