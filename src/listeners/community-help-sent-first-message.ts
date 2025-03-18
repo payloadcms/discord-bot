@@ -21,7 +21,7 @@ export default (client: Client): void => {
 
       // send message to the forum channel
       const channel = await client.channels.fetch(thread.id);
-      if (channel !== null && channel.isTextBased()) {
+      if (channel !== null && channel.isTextBased() && 'send' in channel) {
         const threadMessages = await thread.messages.fetch();
         // check if it's the first message
         if (threadMessages.size !== 1) {
