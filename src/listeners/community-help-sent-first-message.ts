@@ -54,7 +54,16 @@ export default (client: Client): void => {
           .setStyle(ButtonStyle.Success)
         const row = new ActionRowBuilder<any>().addComponents(solvedButton)
 
-        const communityHelpResults = await searchCommunityHelp(searchQuery)
+        let communityHelpResults = await searchCommunityHelp(searchQuery)
+        if (communityHelpResults.length === 0) {
+          // Search again using only the first 3 words of the search query
+          const searchQueryWords = searchQuery.split(' ')
+          if (searchQueryWords.length > 3) {
+            const searchQueryShort = searchQueryWords.slice(0, 3).join(' ')
+            communityHelpResults = await searchCommunityHelp(searchQueryShort)
+          }
+        }
+
         const docResults = await searchDocs(searchQuery)
         if (communityHelpResults.length === 0 && docResults.length === 0) {
           channel.send({

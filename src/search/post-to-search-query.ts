@@ -13,7 +13,7 @@ ${message_to_use?.trim()}
 
 ###
 
-Based on the title and the message of the post, generate a search query (max. 8 words) for our algolia search endpoints, which might find related posts. Focus on the title
+Based on the title and the message of the post, generate a short, concise search query (max. 6 words) for our algolia search endpoints, which might find related posts. Focus on the title
 `
 
   console.log('Post-to-search-query LLM prompt:\n\n', prompt)
@@ -23,7 +23,7 @@ Based on the title and the message of the post, generate a search query (max. 8 
       input: prompt,
       maxTokens: 100,
       model: 'gpt-4o',
-      systemMessage: 'You only output plain search queries',
+      systemMessage: 'You only output short, concise, plain search queries',
       temperature: 0.9,
     })
     console.log('Post-to-search-query LLM completion:', completion?.trim())
