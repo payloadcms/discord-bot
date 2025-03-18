@@ -12,7 +12,6 @@
     "@ai-sdk/openai": "1.2.5",
     "ai": "4.1.61",
     "algoliasearch": "4.19.1",
-    "axios": "1.8.x",
     "discord.js": "14.18.0",
     "dotenv": "16.3.1",
     "ts-node": "10.9.1"
