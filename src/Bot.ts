@@ -1,11 +1,11 @@
+import { Client, GatewayIntentBits } from 'discord.js'
 import http from 'http'
 
-import { Client, GatewayIntentBits } from 'discord.js'
-import ready from './listeners/ready'
 import communityHelpCreated from './listeners/community-help-created'
 import communityHelpSentFirstMessage from './listeners/community-help-sent-first-message'
-import slashCommands from './listeners/slash-commands'
 import jobCreated from './listeners/job-created'
+import ready from './listeners/ready'
+import slashCommands from './listeners/slash-commands'
 
 const token = process.env.BOT_TOKEN
 

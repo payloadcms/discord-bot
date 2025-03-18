@@ -1,44 +1,46 @@
-import { createOpenAI, OpenAIProvider } from '@ai-sdk/openai';
-import { generateText } from 'ai';
+import type { OpenAIProvider } from '@ai-sdk/openai'
 
-type OpenAIModel = Parameters<OpenAIProvider['chat']>[0];
+import { createOpenAI } from '@ai-sdk/openai'
+import { generateText } from 'ai'
+
+type OpenAIModel = Parameters<OpenAIProvider['chat']>[0]
 
 export async function getCompletions({
-  input,
-  temperature,
-  model,
-  maxTokens,
-  systemMessage,
-  presence_penalty,
   frequency_penalty,
+  input,
+  maxTokens,
+  model,
+  presence_penalty,
+  systemMessage,
+  temperature,
 }: {
-  input: string;
-  temperature: number;
-  model: OpenAIModel;
-  maxTokens: number;
-  systemMessage?: string;
-  presence_penalty?: number;
-  frequency_penalty?: number;
+  frequency_penalty?: number
+  input: string
+  maxTokens: number
+  model: OpenAIModel
+  presence_penalty?: number
+  systemMessage?: string
+  temperature: number
 }): Promise<string> {
   const openai = createOpenAI({
-    compatibility: 'strict',
     apiKey: process.env.OPENAI_KEY,
-  });
+    compatibility: 'strict',
+  })
 
   const openaiModel = openai(
     process.env.USE_FASTER_MODEL_FOR_DEBUG_SPEEDUP === 'true' ? 'gpt-3.5-turbo' : model,
     {},
-  );
+  )
 
   const { text } = await generateText({
-    model: openaiModel,
-    prompt: input,
-    temperature: temperature,
-    maxTokens: maxTokens,
-    system: systemMessage,
-    presencePenalty: presence_penalty ?? 0.0,
     frequencyPenalty: frequency_penalty ?? 0.0,
-  });
+    maxTokens,
+    model: openaiModel,
+    presencePenalty: presence_penalty ?? 0.0,
+    prompt: input,
+    system: systemMessage,
+    temperature,
+  })
 
-  return text;
+  return text
 }

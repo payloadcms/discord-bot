@@ -1,14 +1,18 @@
-import {
-  ApplicationCommandType, AttachmentBuilder,
+import type {
   Client,
-  ContextMenuCommandBuilder,
-  GuildMember, Message,
-  MessageContextMenuCommandInteraction, ThreadChannel,
-} from 'discord.js';
-import { ContextMenuCommand } from '../types';
-import { isCommunityHelpThread } from '../helpers/is-community-help';
-import { getCommunityHelpChannel } from '../helpers/get-community-help-channel';
-import { messageToTitle } from '../search/message-to-title';
+  GuildMember,
+  Message,
+  MessageContextMenuCommandInteraction,
+  ThreadChannel,
+} from 'discord.js'
+
+import { ApplicationCommandType, AttachmentBuilder, ContextMenuCommandBuilder } from 'discord.js'
+
+import type { ContextMenuCommand } from '../types'
+
+import { getCommunityHelpChannel } from '../helpers/get-community-help-channel'
+import { isCommunityHelpThread } from '../helpers/is-community-help'
+import { messageToTitle } from '../search/message-to-title'
 
 export const MoveToCommunityHelpContext: ContextMenuCommand = {
   data: new ContextMenuCommandBuilder()
@@ -17,160 +21,166 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
   run: async (client: Client, interaction: MessageContextMenuCommandInteraction) => {
     if (!interaction.channel || !interaction.guild || isCommunityHelpThread(interaction.channel)) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'You cannot use this command in a community-help thread.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
     if (!interaction.member || !interaction.inCachedGuild() || !hasPermission(interaction.member)) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'You do not have permission to move this message to community-help.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
 
     // create new thread in community help
-    const communityHelpChannel = getCommunityHelpChannel(interaction.guild);
-    const availableTags = communityHelpChannel.availableTags;
+    const communityHelpChannel = getCommunityHelpChannel(interaction.guild)
+    const availableTags = communityHelpChannel.availableTags
     const unansweredTagID: string | undefined = availableTags.find(
       (tag) =>
         // check if includes "solve" or equals "answered"
         tag.name.toLowerCase().includes('unsolve') || tag.name.toLowerCase() === 'unanswered',
-    )?.id;
+    )?.id
     if (!unansweredTagID) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'Could not find the unanswered tag.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
 
-    const _messageContent: string = interaction.targetMessage.content as string
+    const _messageContent: string = interaction.targetMessage.content
     if (!_messageContent && !interaction.targetMessage.attachments.size) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'You cannot use this command on a message without content.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
     const allMessagesBefore: Message[] = []
     const allMessagesAfter: Message[] = []
     const allMessages: Message[] = []
 
-
     // Now check the messages BEFORE and AFTER the messages and add all messages by the same user to a list, until it finds a message from a different user or bot
 
-    const messagesBefore = await interaction.channel.messages.fetch({ limit: 10, before: interaction.targetMessage.id });
+    const messagesBefore = await interaction.channel.messages.fetch({
+      before: interaction.targetMessage.id,
+      limit: 10,
+    })
     for (const [key, value] of messagesBefore) {
       if (value.author.id === interaction.targetMessage.author.id) {
         allMessagesBefore.push(value)
       } else {
-        break;
+        break
       }
     }
-    const messagesAfter = (await interaction.channel.messages.fetch({ limit: 10, after: interaction.targetMessage.id })).reverse();
+    const messagesAfter = (
+      await interaction.channel.messages.fetch({ after: interaction.targetMessage.id, limit: 10 })
+    ).reverse()
 
     for (const [key, value] of messagesAfter) {
-
       if (value.author.id === interaction.targetMessage.author.id) {
         allMessagesAfter.push(value)
       } else {
-        if(!value.content?.trim()?.length) {
+        if (!value.content?.trim()?.length) {
           break
         }
-        break;
+        break
       }
     }
     allMessages.push(...allMessagesBefore.reverse(), interaction.targetMessage, ...allMessagesAfter)
 
-
     //Handle attachments
-    let attachmentFiles: any = [];
+    const attachmentFiles: any = []
 
-    for(const message of allMessages) {
+    for (const message of allMessages) {
       if (message.attachments) {
-        const attachments = message.attachments.toJSON();
+        const attachments = message.attachments.toJSON()
         attachmentFiles.push(...attachments)
       }
     }
 
-
     // Download all attachments
-    const attachments: AttachmentBuilder[] = [];
+    const attachments: AttachmentBuilder[] = []
 
-    for(const a of attachmentFiles) {
-      const attachmentURL = a.url;
-      const response = await fetch(attachmentURL);
-      if (response.ok) { // Check if the HTTP status code is 200-299
-        const arrayBuffer = await response.arrayBuffer(); // Get an ArrayBuffer
+    for (const a of attachmentFiles) {
+      const attachmentURL = a.url
+      const response = await fetch(attachmentURL)
+      if (response.ok) {
+        // Check if the HTTP status code is 200-299
+        const arrayBuffer = await response.arrayBuffer() // Get an ArrayBuffer
         // Convert to  BufferResolvable | Stream
-        const buffer = Buffer.from(arrayBuffer);
+        const buffer = Buffer.from(arrayBuffer)
 
         const attachment = new AttachmentBuilder(buffer, {
           name: a.name,
-        });
+        })
 
-        attachments.push(attachment);
+        attachments.push(attachment)
       } else {
-        console.error('Failed to fetch:', response.statusText);
+        console.error('Failed to fetch:', response.statusText)
       }
-
     }
 
+    const avatarURL =
+      'https://cdn.discordapp.com/avatars/' +
+        interaction.targetMessage.author.id +
+        '/' +
+        interaction.targetMessage.author.avatar +
+        '.png' ?? interaction.targetMessage.author.defaultAvatarURL
 
+    const webhooks = await communityHelpChannel.fetchWebhooks()
+    const webhook = webhooks?.size
+      ? webhooks.first()
+      : await communityHelpChannel.createWebhook({
+          name: interaction.targetMessage.author.displayName,
+          avatar: avatarURL,
+        })
 
-    const avatarURL =( "https://cdn.discordapp.com/avatars/" +  interaction.targetMessage.author.id + "/" +  interaction.targetMessage.author.avatar + ".png" )?? interaction.targetMessage.author.defaultAvatarURL;
-
-    const webhooks = await communityHelpChannel.fetchWebhooks();
-    const webhook = webhooks?.size ? webhooks.first() : await communityHelpChannel.createWebhook({
-      name: interaction.targetMessage.author.displayName,
-      avatar: avatarURL,
-    })
-
-    if(!webhook) {
+    if (!webhook) {
       await interaction.followUp({
         content: 'Could not create webhook.',
-      });
-      return;
+      })
+      return
     }
-
 
     const messageContent = allMessages
       .filter((message) => message.content && message.content.trim().length > 0)
-      .map((message) => message.content).join('\n\n')
+      .map((message) => message.content)
+      .join('\n\n')
 
     const threadName = await messageToTitle(messageContent)
 
     // make webhook open thread
-    const threadMessage: Message = (await webhook.send({
+    const threadMessage: Message = await webhook.send({
+      avatarURL,
       username: interaction.targetMessage.author.displayName,
-      avatarURL: avatarURL,
       // @ts-ignore
       appliedTags: [unansweredTagID],
+      content: messageContent,
       files: attachments,
-      threadName: threadName,
-      content:
-        messageContent
-    }) ) as Message;
+      threadName,
+    })
 
-
-
-    const thread: ThreadChannel =  communityHelpChannel.threads.cache.get(threadMessage.channelId) as ThreadChannel
+    const thread: ThreadChannel = communityHelpChannel.threads.cache.get(
+      threadMessage.channelId,
+    ) as ThreadChannel
     //await thread.members.add(interaction.targetMessage.author); // Tagging the user already adds them as a member
 
     // Delete original question if it's not in a thread
     if (!interaction.targetMessage.thread) {
-      for(const message of allMessages) {
-        await message.delete();
+      for (const message of allMessages) {
+        await message.delete()
       }
     } else {
       // has thread - send message to thread
       await interaction.targetMessage.thread.send({
         content:
-          "**This question has been moved to <#" +
-          thread.id + ">** so it doesn't get lost. Please continue the conversation there"
-      });
+          '**This question has been moved to <#' +
+          thread.id +
+          ">** so it doesn't get lost. Please continue the conversation there",
+      })
     }
 
     const followUpMessage = await interaction.followUp({
@@ -179,8 +189,9 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
         interaction.targetMessage.author.id +
         '>' +
         ' - Your question has been moved to <#' +
-        thread.id + "> so it doesn't get lost. Please continue the conversation there"
-    });
+        thread.id +
+        "> so it doesn't get lost. Please continue the conversation there",
+    })
 
     await thread.send({
       content:
@@ -188,23 +199,23 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
         interaction.targetMessage.author.id +
         '>' +
         ' - Moved from ' +
-        followUpMessage.url
+        followUpMessage.url,
     })
 
     // get reaction message
     //const message = await interaction.channel.messages.fetch(interaction.replied as string);
-    return;
+    return
   },
-};
+}
 
 function hasPermission(commandExecutor: GuildMember): boolean {
   if (commandExecutor.permissions.has('ManageMessages')) {
-    return true;
+    return true
   }
 
   if (commandExecutor.roles.cache.find((role) => role.name.toLowerCase() === 'contributor mod')) {
-    return true;
+    return true
   }
 
-  return false;
+  return false
 }

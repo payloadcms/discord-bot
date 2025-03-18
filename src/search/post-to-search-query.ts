@@ -1,9 +1,9 @@
-import { getCompletions } from '../ai/get-completions';
+import { getCompletions } from '../ai/get-completions'
 
 export async function postToSearchQuery(title: string, message: string): Promise<string> {
   const message_to_use = message.includes('Original message from')
     ? message.split('Original message from')[0]
-    : message;
+    : message
 
   const prompt = `
 Title: ${title}
@@ -14,22 +14,22 @@ ${message_to_use?.trim()}
 ###
 
 Based on the title and the message of the post, generate a search query (max. 8 words) for our algolia search endpoints, which might find related posts. Focus on the title
-`;
+`
 
-  console.log('Post-to-search-query LLM prompt:\n\n', prompt);
+  console.log('Post-to-search-query LLM prompt:\n\n', prompt)
 
   try {
     const completion = await getCompletions({
       input: prompt,
-      systemMessage: 'You only output plain search queries',
-      model: 'gpt-4o',
       maxTokens: 100,
+      model: 'gpt-4o',
+      systemMessage: 'You only output plain search queries',
       temperature: 0.9,
-    });
-    console.log('Post-to-search-query LLM completion:', completion?.trim());
-    return completion?.trim()?.replace(/['"]+/g, '') || title.replace(/['"]+/g, '');
+    })
+    console.log('Post-to-search-query LLM completion:', completion?.trim())
+    return completion?.trim()?.replace(/['"]+/g, '') || title.replace(/['"]+/g, '')
   } catch (e) {
-    console.log('Error transforming searchQuery with OpenAI. Returning title instead\n', e);
+    console.log('Error transforming searchQuery with OpenAI. Returning title instead\n', e)
   }
-  return title.replace(/['"]+/g, '');
+  return title.replace(/['"]+/g, '')
 }

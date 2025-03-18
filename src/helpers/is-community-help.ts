@@ -1,16 +1,18 @@
-import { ChannelType, TextBasedChannel } from 'discord.js';
+import type { TextBasedChannel } from 'discord.js'
+
+import { ChannelType } from 'discord.js'
 
 export function isCommunityHelpThread(thread: TextBasedChannel): boolean {
   if (!thread.isThread()) {
-    return false;
+    return false
   }
   if (thread.type !== ChannelType.PublicThread) {
-    return false;
+    return false
   }
-  const communityHelpChannelId = process.env.COMMUNITY_HELP_CHANNEL_ID;
+  const communityHelpChannelId = process.env.COMMUNITY_HELP_CHANNEL_ID
 
   if (thread.parentId !== communityHelpChannelId) {
-    return false;
+    return false
   }
-  return true;
+  return true
 }
