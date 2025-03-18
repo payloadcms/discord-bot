@@ -1,7 +1,7 @@
 {
   "name": "payloadbot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/Bot.ts",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
@@ -9,12 +9,12 @@
     "start": "ts-node src/Bot.ts"
   },
   "dependencies": {
+    "@ai-sdk/openai": "1.2.5",
+    "ai": "4.1.61",
     "algoliasearch": "4.19.1",
     "axios": "1.8.x",
     "discord.js": "14.18.0",
     "dotenv": "16.3.1",
-    "langchain": "0.0.118",
-    "node-fetch": "3.3.2",
     "ts-node": "10.9.1"
   },
   "devDependencies": {
