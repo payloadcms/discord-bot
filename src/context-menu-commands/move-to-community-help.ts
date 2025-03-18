@@ -87,11 +87,9 @@ export const MoveToCommunityHelp: ContextMenuCommand = {
     }
 
     const avatarURL =
-      'https://cdn.discordapp.com/avatars/' +
-        interaction.targetMessage.author.id +
-        '/' +
-        interaction.targetMessage.author.avatar +
-        '.png' ?? interaction.targetMessage.author.defaultAvatarURL
+      interaction.targetMessage.author.id && interaction.targetMessage.author.avatar
+        ? `https://cdn.discordapp.com/avatars/${interaction.targetMessage.author.id}/${interaction.targetMessage.author.avatar}.png`
+        : interaction.targetMessage.author.defaultAvatarURL
 
     const webhooks = await communityHelpChannel.fetchWebhooks()
     const webhook = webhooks?.size
