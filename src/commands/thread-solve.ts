@@ -1,79 +1,80 @@
-import {
+import type {
+  AnyThreadChannel,
   ChatInputCommandInteraction,
   Client,
-  SlashCommandBuilder,
-  AnyThreadChannel,
   ForumChannel,
-  EmbedBuilder,
   GuildMember,
-  ThreadMember, User,
-} from 'discord.js';
-import { Command } from '../types';
-import { isCommunityHelpThread } from '../helpers/is-community-help';
-import { hasThreadManagePermission } from './hasThreadManagePermission';
+} from 'discord.js'
+
+import { EmbedBuilder, SlashCommandBuilder, ThreadMember, User } from 'discord.js'
+
+import type { Command } from '../types'
+
+import { isCommunityHelpThread } from '../helpers/is-community-help'
+import { hasThreadManagePermission } from './hasThreadManagePermission'
 
 export const ThreadSolve: Command = {
   data: new SlashCommandBuilder().setName('solve').setDescription('Solves a thread'),
   run: async (client: Client, interaction: ChatInputCommandInteraction) => {
     if (!interaction.channel || !isCommunityHelpThread(interaction.channel)) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'You can only use this command in a community-help thread.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
 
     // mark forum post thread as solved with solved tag
-    const forumThread: AnyThreadChannel = interaction.channel as AnyThreadChannel;
+    const forumThread: AnyThreadChannel = interaction.channel as AnyThreadChannel
     const forumChannel: ForumChannel = (await client.channels.fetch(
       forumThread.parentId as string,
-    )) as ForumChannel;
+    )) as ForumChannel
 
     // check if user has permission to solve the thread
     if (
       !interaction.inCachedGuild() ||
-      !(await hasThreadManagePermission(interaction.member as GuildMember, forumThread))
+      !(await hasThreadManagePermission(interaction.member, forumThread))
     ) {
       await interaction.followUp({
-        ephemeral: true,
         content:
           'You do not have permission to mark this thread as solved. Only thread creators, contributors and payload team members can mark a thread as solved.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
 
-    const availableTags = forumChannel.availableTags;
+    const availableTags = forumChannel.availableTags
     const solvedTagID: string | undefined = availableTags.find(
       (tag) =>
         // check if includes "solve" or equals "answered"
         tag.name.toLowerCase().includes('solve') || tag.name.toLowerCase() === 'answered',
-    )?.id;
+    )?.id
     const unansweredTagID: string | undefined = availableTags.find(
       (tag) =>
         // check if includes "solve" or equals "answered"
         tag.name.toLowerCase().includes('unsolve') || tag.name.toLowerCase() === 'unanswered',
-    )?.id;
+    )?.id
 
     if (!solvedTagID || !unansweredTagID) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'Bot error: Could not find tags.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
     if (forumThread.appliedTags.includes(solvedTagID)) {
       await interaction.followUp({
-        ephemeral: true,
         content: 'This thread is already marked as solved.',
-      });
-      return;
+        ephemeral: true,
+      })
+      return
     }
 
-    let appliedTags = [...forumThread.appliedTags];
+    let appliedTags = [...forumThread.appliedTags]
     // remove "unanswered tag"
-    appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID);
+    appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID)
 
-    forumThread.setAppliedTags([...appliedTags, solvedTagID]);
+    forumThread.setAppliedTags([...appliedTags, solvedTagID])
 
     const starEmbed = new EmbedBuilder()
       .setColor(0xffffff)
@@ -97,11 +98,10 @@ export const ThreadSolve: Command = {
         name: '👍 Review Us',
         value:
           '**[Click here to review us on G2](https://www.g2.com/products/payload-cms/take_survey)**',
-      });
+      })
     await interaction.followUp({
-      ephemeral: false,
       embeds: [starEmbed],
-    });
+      ephemeral: false,
+    })
   },
-};
-
+}

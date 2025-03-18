@@ -1,17 +1,17 @@
-import {
-  Client,
+import type {
   ChatInputCommandInteraction,
+  Client,
   ContextMenuCommandBuilder,
   MessageContextMenuCommandInteraction,
   SlashCommandBuilder,
-} from 'discord.js';
+} from 'discord.js'
 
 export interface Command {
-  data: SlashCommandBuilder;
-  run: (client: Client, interaction: ChatInputCommandInteraction) => void;
+  data: SlashCommandBuilder
+  run: (client: Client, interaction: ChatInputCommandInteraction) => void
 }
 
 export interface ContextMenuCommand {
-  data: ContextMenuCommandBuilder;
-  run: (client: Client, interaction: MessageContextMenuCommandInteraction) => void;
+  data: ContextMenuCommandBuilder
+  run: (client: Client, interaction: MessageContextMenuCommandInteraction) => void
 }
