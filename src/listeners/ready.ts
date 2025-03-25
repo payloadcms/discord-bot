@@ -2,7 +2,7 @@ import type { Client } from 'discord.js'
 
 import { Commands, ContextMenuCommands } from './slash-commands'
 
-export default (client: Client): void => {
+export const readyListener = (client: Client): void => {
   client.on('ready', async () => {
     if (!client.user || !client.application) {
       return

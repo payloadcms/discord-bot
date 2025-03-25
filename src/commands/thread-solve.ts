@@ -3,10 +3,9 @@ import type {
   ChatInputCommandInteraction,
   Client,
   ForumChannel,
-  GuildMember,
 } from 'discord.js'
 
-import { EmbedBuilder, SlashCommandBuilder, ThreadMember, User } from 'discord.js'
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
 
 import type { Command } from '../types'
 
@@ -74,7 +73,7 @@ export const ThreadSolve: Command = {
     // remove "unanswered tag"
     appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID)
 
-    forumThread.setAppliedTags([...appliedTags, solvedTagID])
+    await forumThread.setAppliedTags([...appliedTags, solvedTagID])
 
     const starEmbed = new EmbedBuilder()
       .setColor(0xffffff)
@@ -99,6 +98,7 @@ export const ThreadSolve: Command = {
         value:
           '**[Click here to review us on G2](https://www.g2.com/products/payload-cms/take_survey)**',
       })
+
     await interaction.followUp({
       embeds: [starEmbed],
       ephemeral: false,

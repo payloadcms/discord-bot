@@ -1,4 +1,5 @@
 import type {
+  Attachment,
   Client,
   GuildMember,
   Message,
@@ -92,7 +93,7 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
     allMessages.push(...allMessagesBefore.reverse(), interaction.targetMessage, ...allMessagesAfter)
 
     //Handle attachments
-    const attachmentFiles: any = []
+    const attachmentFiles: Attachment[] = []
 
     for (const message of allMessages) {
       if (message.attachments) {
@@ -152,13 +153,12 @@ export const MoveToCommunityHelpContext: ContextMenuCommand = {
 
     // make webhook open thread
     const threadMessage: Message = await webhook.send({
-      avatarURL,
-      username: interaction.targetMessage.author.displayName,
-      // @ts-ignore
       appliedTags: [unansweredTagID],
+      avatarURL,
       content: messageContent,
       files: attachments,
       threadName,
+      username: interaction.targetMessage.author.displayName,
     })
 
     const thread: ThreadChannel = communityHelpChannel.threads.cache.get(

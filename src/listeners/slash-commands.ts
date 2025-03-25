@@ -18,10 +18,8 @@ export const ContextMenuCommands: ContextMenuCommand[] = [
   MoveToCommunityHelpContext,
 ]
 
-export default (client: Client): void => {
+export const slashCommands = (client: Client): void => {
   client.on('interactionCreate', async (interaction: Interaction) => {
-    console.log('interactionCreate')
-
     if (interaction.isChatInputCommand()) {
       await handleSlashCommand(client, interaction)
     } else if (interaction.isMessageContextMenuCommand()) {
@@ -52,7 +50,7 @@ const handleSlashCommand = async (
     return
   }
 
-  slashCommand.run(client, interaction)
+  await slashCommand.run(client, interaction)
 }
 
 const handleContextMenuCommand = async (
@@ -70,5 +68,5 @@ const handleContextMenuCommand = async (
     return
   }
 
-  contextMenuCommand.run(client, interaction)
+  await contextMenuCommand.run(client, interaction)
 }

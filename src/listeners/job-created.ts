@@ -2,7 +2,7 @@ import type { Client, ThreadChannel } from 'discord.js'
 
 import { isJobThread } from '../helpers/is-job'
 
-export default (client: Client): void => {
+export const jobCreated = (client: Client): void => {
   client.on('threadCreate', async (thread, newlyCreated) => {
     if (newlyCreated && isJobThread(thread)) {
       const channel: ThreadChannel = (await client.channels.fetch(thread.id)) as ThreadChannel

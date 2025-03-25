@@ -3,7 +3,6 @@ import type {
   ChatInputCommandInteraction,
   Client,
   ForumChannel,
-  GuildMember,
 } from 'discord.js'
 
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js'
@@ -74,7 +73,7 @@ export const ThreadUnSolve: Command = {
     // remove "unanswered tag"
     appliedTags = appliedTags.filter((tag) => tag !== solvedTagID)
 
-    forumThread.setAppliedTags([...appliedTags, unansweredTagID])
+    await forumThread.setAppliedTags([...appliedTags, unansweredTagID])
 
     const starEmbed = new EmbedBuilder()
       .setColor(0xffffff)

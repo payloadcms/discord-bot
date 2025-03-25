@@ -1,13 +1,13 @@
 import type { AnyThreadChannel, Client, ForumChannel } from 'discord.js'
 
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, EmbedBuilder } from 'discord.js'
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js'
 
 import { isCommunityHelpThread } from '../helpers/is-community-help'
 import { postToSearchQuery } from '../search/post-to-search-query'
 import { searchCommunityHelp } from '../search/search-community-help'
 import { searchDocs } from '../search/search-docs'
 
-export default (client: Client): void => {
+export const communityHelpSentFirstMessage = (client: Client): void => {
   // when send message in thread
   client.on('messageCreate', async (message) => {
     if (isCommunityHelpThread(message.channel)) {
@@ -39,14 +39,12 @@ export default (client: Client): void => {
           // remove "unanswered tag"
           appliedTags = appliedTags.filter((tag) => tag !== unansweredTagID)
 
-          thread.setAppliedTags([...appliedTags, unansweredTagID])
+          await thread.setAppliedTags([...appliedTags, unansweredTagID])
         } else {
           console.error('unansweredTagID not found!')
         }
 
         const searchQuery = await postToSearchQuery(thread.name, message.content)
-        console.log('thread name', thread.name)
-        console.log('searchquery', searchQuery)
 
         const solvedButton = new ButtonBuilder()
           .setCustomId('solved')
@@ -66,7 +64,7 @@ export default (client: Client): void => {
 
         const docResults = await searchDocs(searchQuery)
         if (communityHelpResults.length === 0 && docResults.length === 0) {
-          channel.send({
+          await channel.send({
             components: [row],
             embeds: [
               new EmbedBuilder()
@@ -144,7 +142,7 @@ export default (client: Client): void => {
         helpEmbed.setDescription(description)
 
         // Now you can send this embed
-        channel.send({ components: [row], embeds: [helpEmbed] })
+        await channel.send({ components: [row], embeds: [helpEmbed] })
       }
     }
   })

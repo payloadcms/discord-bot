@@ -1,11 +1,11 @@
 import { Client, GatewayIntentBits } from 'discord.js'
 import http from 'http'
 
-import communityHelpCreated from './listeners/community-help-created'
-import communityHelpSentFirstMessage from './listeners/community-help-sent-first-message'
-import jobCreated from './listeners/job-created'
-import ready from './listeners/ready'
-import slashCommands from './listeners/slash-commands'
+import { communityHelpCreated } from './listeners/community-help-created'
+import { communityHelpSentFirstMessage } from './listeners/community-help-sent-first-message'
+import { jobCreated } from './listeners/job-created'
+import { readyListener } from './listeners/ready'
+import { slashCommands } from './listeners/slash-commands'
 
 const token = process.env.BOT_TOKEN
 
@@ -22,13 +22,13 @@ const client = new Client({
   ],
 })
 
-ready(client)
+readyListener(client)
 communityHelpCreated(client)
 jobCreated(client)
 communityHelpSentFirstMessage(client)
 slashCommands(client)
 
-client.login(token)
+await client.login(token)
 
 // Create server for DO health check
 const server = http.createServer((req: any, res: any) => {

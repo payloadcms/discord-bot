@@ -8,10 +8,10 @@ import type {
 
 export interface Command {
   data: SlashCommandBuilder
-  run: (client: Client, interaction: ChatInputCommandInteraction) => void
+  run: (client: Client, interaction: ChatInputCommandInteraction) => Promise<void> | void
 }
 
 export interface ContextMenuCommand {
   data: ContextMenuCommandBuilder
-  run: (client: Client, interaction: MessageContextMenuCommandInteraction) => void
+  run: (client: Client, interaction: MessageContextMenuCommandInteraction) => Promise<void> | void
 }
