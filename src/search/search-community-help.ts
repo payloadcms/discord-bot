@@ -34,6 +34,6 @@ export async function searchCommunityHelp(search_term: string): Promise<any> {
     },
   ])
 
-  // @ts-ignore
+  // @ts-expect-error
   return results.results[0].hits
 }
