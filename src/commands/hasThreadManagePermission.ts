@@ -1,19 +1,25 @@
 // check if user has permission to perform thread management tasks like solving or unsolving threads. This includes things a thread creator can do
-import type { AnyThreadChannel, GuildMember } from 'discord.js'
+import type { AnyThreadChannel, GuildMember, ThreadMember } from 'discord.js'
 
 export async function hasThreadManagePermission(
   commandExecutor: GuildMember,
   forumThread: AnyThreadChannel,
 ): Promise<boolean> {
-  const threadCreator = await forumThread.fetchOwner()
-  let threadCreatorID = threadCreator?.id
+  let threadCreator: null | ThreadMember = null
+  try {
+    threadCreator = await forumThread.fetchOwner({
+      force: true,
+    })
+  } catch (_ignored) {
+    // ignore error - if the thread creator is a bot, this will fail
+  }
+
   let threadCreatorIsBot = threadCreator?.user?.bot
 
   if (!threadCreator) {
     // Thread created by webhook (due to move-to-community-help)
     // Fetch user of first message
     const firstMessage = await forumThread.fetchStarterMessage()
-    threadCreatorID = firstMessage?.author.id as string
     threadCreatorIsBot = firstMessage?.author.bot as boolean
   }
 
